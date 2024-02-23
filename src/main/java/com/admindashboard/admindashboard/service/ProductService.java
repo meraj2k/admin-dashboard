@@ -1,2 +1,27 @@
-package com.admindashboard.admindashboard.service;public interface ProductService {
+package com.admindashboard.admindashboard.service;
+
+import com.admindashboard.admindashboard.entity.Product;
+import com.admindashboard.admindashboard.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public List<Product> getProducts() {
+        return productRepository.findAll();
+    }
+
+    public Product addProduct(Product product) {
+        return productRepository.save(product);
+    }
 }

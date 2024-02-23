@@ -1,2 +1,4 @@
-package com.admindashboard.admindashboard.entity;public class Category {
+package com.admindashboard.admindashboard.entity;
+
+public class Category {
 }
