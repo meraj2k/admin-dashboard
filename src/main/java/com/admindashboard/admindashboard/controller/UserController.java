@@ -32,43 +32,45 @@ public class UserController {
     }
 
     // Get user by ID
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable("userId") String userId) {
-        User user = userService.getUserById(userId);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<User> getUserById(@PathVariable("userId") String userId) {
+//        User user = userService.getUserById(userId);
+//        if (user != null) {
+//            return new ResponseEntity<>(user, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     // Create a new user
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
+        String password = user.getHashKey();
         User createdUser = userService.createUser(user);
+        createdUser.setHashKey(password);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     // Update user details
-    @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable("userId") String userId, @RequestBody User user) {
-        User updatedUser = userService.updateUser(userId, user);
-        if (updatedUser != null) {
-            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+//    @PutMapping("/{userId}")
+//    public ResponseEntity<User> updateUser(@PathVariable("userId") String userId, @RequestBody User user) {
+//        User updatedUser = userService.updateUser(userId, user);
+//        if (updatedUser != null) {
+//            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     // Delete user
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("userId") String userId) {
-        boolean deleted = userService.deleteUser(userId);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+//    @DeleteMapping("/{userId}")
+//    public ResponseEntity<Void> deleteUser(@PathVariable("userId") String userId) {
+//        boolean deleted = userService.deleteUser(userId);
+//        if (deleted) {
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 }
 

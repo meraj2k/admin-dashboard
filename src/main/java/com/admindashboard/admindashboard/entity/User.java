@@ -4,54 +4,58 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.admindashboard.admindashboard.util.Role;
+import com.admindashboard.admindashboard.util.SnowflakeIdGenerator;
 import com.admindashboard.admindashboard.util.Status;
 
 @Entity
-@Table(name = "users") // Specify the table name here
+@Table(name = "users")
 public class User {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id",unique = true, nullable = false)
-    private String userId;
+    @Column(name = "user_id")
+    private long userId;
 
-    @Column(name = "email",unique = true, nullable = false)
+    @Column(name = "email", nullable = false, length = 50,unique = true)
     private String email;
-    @Column(name = "hash_key",nullable = false)
+    @Column(name = "hash_key", nullable = false)
     private String hashKey;
 
+    @Column(length = 50)
     private String name;
 
+    @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(length = 20)
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.ACTIVE;
 
-    private boolean activeFlag;
+    @Column(name = "active_flag")
+    private boolean activeFlag = true;
 
-    // Constructor
     public User() {
-        this.userId = generateUserId();
+        SnowflakeIdGenerator snowflakeIdGenerator = new SnowflakeIdGenerator(1, 1);
+        this.userId = snowflakeIdGenerator.generateUniqueId();
     }
 
-    // Getters and setters
+    public User(String email, String hashKey, String name, Role role, Status status) {
+        SnowflakeIdGenerator snowflakeIdGenerator = new SnowflakeIdGenerator(1, 1);
+        this.userId = snowflakeIdGenerator.generateUniqueId();
+        this.email = email;
+        this.hashKey = generateHashKey(hashKey);
+        this.name = name;
+        this.role = role;
+        this.status = status;
+    }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
@@ -103,39 +107,31 @@ public class User {
         this.activeFlag = activeFlag;
     }
 
-    // Generate userId based on date-time
-  
-
-    public static String generateUserId() {
-        String userIdString = "USER_" + System.currentTimeMillis();
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(userIdString.getBytes());
-            // Convert the hash bytes to a long value
-            return bytesToLong(hash);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "-1"; // Handle error case
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", email='" + email + '\'' +
+                ", hashKey='" + hashKey + '\'' +
+                ", name='" + name + '\'' +
+                ", role=" + role +
+                ", status=" + status +
+                ", activeFlag=" + activeFlag +
+                '}';
     }
 
-       // Helper method to convert byte array to long value
-       private static String bytesToLong(byte[] bytes) {
-        long result = 0;
-        for (int i = 0; i < bytes.length; i++) {
-            result <<= 8;
-            result |= (bytes[i] & 0xFF);
-        }
-        return Long.toString(result);
-    }
-    // Generate hash key using SHA-256 algorithm
-    public void generateHashKey(String password) {
+
+
+
+     //Generate hash key using SHA-256 algorithm
+    public String generateHashKey(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(password.getBytes());
-            this.hashKey = Base64.getEncoder().encodeToString(hash);
+            return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        return "";
     }
 }
